@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 
 from django import forms
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
 
@@ -25,12 +25,6 @@ class FileAdmin(PrimitivePermissionAwareModelAdmin):
     search_fields = ['name', 'original_filename', 'sha1', 'description']
     raw_id_fields = ('owner',)
     readonly_fields = ('sha1', 'display_canonical')
-
-    # save_as hack, because without save_as it is impossible to hide the
-    # save_and_add_another if save_as is False. To show only save_and_continue
-    # and save in the submit row we need save_as=True and in
-    # render_change_form() override add and change to False.
-    save_as = True
 
     form = FileAdminChangeFrom
 
