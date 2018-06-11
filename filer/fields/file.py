@@ -75,8 +75,8 @@ class AdminFileWidget(ForeignKeyRawIdWidget):
 
     def obj_for_value(self, value):
         try:
-            key = self.rel.get_related_field().name
-            obj = self.rel.to._default_manager.get(**{key: value})
+            key = self.remote_field.get_related_field().name
+            obj = self.remote_field.to._default_manager.get(**{key: value})
         except:
             obj = None
         return obj
@@ -99,7 +99,7 @@ class AdminFileFormField(forms.ModelChoiceField):
     widget = AdminFileWidget
 
     def __init__(self, rel, queryset, to_field_name, *args, **kwargs):
-        self.rel = rel
+        self.remote_field = rel
         self.queryset = queryset
         self.to_field_name = to_field_name
         self.max_value = None
@@ -136,7 +136,7 @@ class FilerFileField(models.ForeignKey):
         # while letting the caller override them.
         defaults = {
             'form_class': self.default_form_class,
-            'rel': self.rel,
+            'rel': self.remote_field,
         }
         defaults.update(kwargs)
         return super(FilerFileField, self).formfield(**defaults)

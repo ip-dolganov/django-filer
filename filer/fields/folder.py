@@ -73,8 +73,8 @@ class AdminFolderWidget(ForeignKeyRawIdWidget):
 
     def obj_for_value(self, value):
         try:
-            key = self.rel.get_related_field().name
-            obj = self.rel.to._default_manager.get(**{key: value})
+            key = self.remote_field.get_related_field().name
+            obj = self.remote_field.to._default_manager.get(**{key: value})
         except:
             obj = None
         return obj
@@ -89,7 +89,7 @@ class AdminFolderFormField(forms.ModelChoiceField):
     widget = AdminFolderWidget
 
     def __init__(self, rel, queryset, to_field_name, *args, **kwargs):
-        self.rel = rel
+        self.remote_field = rel
         self.queryset = queryset
         self.limit_choices_to = kwargs.pop('limit_choices_to', None)
         self.to_field_name = to_field_name
@@ -125,7 +125,7 @@ class FilerFolderField(models.ForeignKey):
         # while letting the caller override them.
         defaults = {
             'form_class': self.default_form_class,
-            'rel': self.rel,
+            'rel': self.remote_field,
         }
         defaults.update(kwargs)
         return super(FilerFolderField, self).formfield(**defaults)
@@ -134,7 +134,7 @@ class FilerFolderField(models.ForeignKey):
         "Returns a suitable description of this field for South."
         # We'll just introspect ourselves, since we inherit.
         from south.modelsinspector import introspector
-        field_class = "django.db.models.fields.related.ForeignKey"
+        field_class = "django.db.models.fields.remote_fieldated.ForeignKey"
         args, kwargs = introspector(self)
         # That's our definition!
         return (field_class, args, kwargs)
